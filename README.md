@@ -2,7 +2,7 @@
 
 This plugin allows you to visualize all data from [`Machbase`](https://www.machbase.com/).
 
-![screenshot](http://intra.machbase.com:800/iflux/nfx/uploads/bd9dd44c58d2439d1a297b83cb5ca90a/Machbase_for_Grafana_2.png)
+![screenshot](https://user-images.githubusercontent.com/30223383/75232656-f27de980-57fa-11ea-82fb-f9eba5827b5c.png)
 
 
 ## Installation
