@@ -1,0 +1,29 @@
+{
+  "type": "datasource",
+  "name": "Machbase",
+  "id": "machbase-datasource",
+  "metrics": true,
+  "annotations": false,
+  "info": {
+    "description": "Machbase datasource for Grafana",
+    "author": {
+      "name": "MACHBASE Inc.",
+      "url": "http://www.machbase.com"
+    },
+    "logos": {
+      "small": "src/img/machbase_logo.png",
+      "large": "src/img/machbase_logo.png"
+    },
+    "links": [
+      {"name": "Website", "url": "http://www.machbase.com"},
+      {"name": "GitHub", "url": "https://github.com/MACHBASE"}
+    ],
+    "keywords": ["datasource", "timeseries", "machbase"],
+    "version": "1.1.2"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "4.5.x",
+    "plugins": [ ]
+  }
+}
