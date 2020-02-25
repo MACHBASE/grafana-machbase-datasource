@@ -1,0 +1,234 @@
+<query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
+  <div class="gf-form" ng-if="ctrl.target.target.errors.hasOwnProperty('last_error') && ctrl.target.target.errors.last_error !== ''">
+    <pre class="gf-form-pre alert alert-error">{{ctrl.target.target.errors.last_error}}</pre>
+  </div>
+
+  <div class="gf-form-inline" ng-if="!ctrl.target.target.rawQuery">
+    <div class="gf-form width-7" ng-if="(ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph') || ctrl.checkAvailableSameas()">
+      <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">FROM</label>
+    </div>
+    <div class="gf-form width-7" ng-if="(ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph') && !ctrl.checkAvailableSameas()">
+      <label class="gf-form-label query-keyword width-5" ng-if="ctrl.target.target.sameAs === ''">FROM</label>
+      <label class="gf-form-label query-keyword width-5" ng-if="ctrl.target.target.sameAs !== ''">Same as</label>
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="''" ng-click="ctrl.changeSameAs()"><i class="fa fa-exchange"></i></a></label>
+      </label>
+    </div>
+    <div class="gf-form width-20" ng-if="ctrl.target.target.sameAs === ''">
+      <select class="gf-form-input gf-size-auto width-18" ng-model="ctrl.target.target.metric" bs-tooltip="ctrl.target.target.metric.length > 40 ? ctrl.target.target.metric : ''" ng-options="f for f in ctrl.target.tables" ng-change="ctrl.updateColumnList()"></select>
+      <label class="gf-form-label gf-form-label--grow width-2" ng-if="ctrl.target.target.metric_type !== '6'" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Refresh table list'" ng-click="ctrl.updateTableList()"><i class="fa fa-refresh"></i></a>
+      </label>
+      <label class="gf-form-label gf-form-label--grow width-2" ng-if="ctrl.target.target.metric_type === '6'" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle TAG Selection mode'" ng-click="ctrl.ToggleTagMode()"><i class="fa fa-exchange"></i></a>
+      </label>
+    </div>
+    <div class="gf-form width-20" ng-if="ctrl.target.target.sameAs !== ''">
+      <select class="gf-form-input gf-size-auto width-20" ng-model="ctrl.target.target.sameAs" ng-options="f for f in ctrl.getRefIds()" ng-change="ctrl.updateSameColumns()"></select>
+    </div>
+    <div class="gf-form" ng-if="ctrl.target.target.tag_mode !== 'Y'">
+      <label class="gf-form-label query-keyword width-6">SELECT</label>
+    </div>
+    <div class="gf-form" ng-if="ctrl.target.target.tag_mode !== 'Y'">
+      <div class="gf-form width-30" ng-if="ctrl.target.target.colinput !== 'select'">
+        <input type="text" class="gf-form-input width-30" ng-model="ctrl.target.target.column" ng-if="ctrl.target.target.downsampling !== 'COUNT(*)'" spellcheck="false" bs-tooltip="ctrl.target.target.column.length > 40 ? ctrl.target.target.column : ''" ng-blur="ctrl.targetBlur()"></input>
+      </div>
+      <div class="gf-form width-30" ng-if="ctrl.target.target.colinput=='select'">
+        <select class="gf-form-input gf-size-auto width-14" ng-model="ctrl.target.target.column" ng-if="ctrl.target.target.downsampling !== 'COUNT(*)'" bs-tooltip="ctrl.target.target.column.length > 40 ? ctrl.target.target.column : ''" ng-options="c for c in ctrl.target.target.columns" ng-change="ctrl.targetBlur()"></select>
+        <label class="gf-form-label query-keyword width-6" ng-if="ctrl.target.target.tag_mode !== 'Y'">Aggregator</label>
+        <select class="gf-form-input gf-size-auto width-10" ng-model="ctrl.target.target.downsampling" ng-if="ctrl.target.target.ncolumns.indexOf(ctrl.target.target.column) > -1" ng-options="c for c in ['(NONE)', 'COUNT(*)', 'COUNT', 'AVG', 'SUM', 'MIN', 'MAX', 'VARIANCE', 'VAR_POP', 'STDDEV', 'STDDEV_POP']" ng-change="ctrl.targetBlur()"></select>
+        <select class="gf-form-input gf-size-auto width-10" ng-model="ctrl.target.target.downsampling" ng-if="ctrl.target.target.ncolumns.indexOf(ctrl.target.target.column) < 0" ng-options="c for c in ['(NONE)', 'COUNT(*)', 'COUNT']" ng-change="ctrl.targetBlur()"></select>
+      </div>
+      <label class="gf-form-label gf-form-label--grow width-2" ng-if="ctrl.target.target.downsampling !== 'COUNT(*)'" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle column input mode'" ng-click="ctrl.toggleColumnInputMode()"><i class="fa fa-exchange"></i></a>
+      </label>
+    </div>
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.target.target.tag_mode === 'Y' && !ctrl.target.target.rawQuery">
+    <div class="gf-form width-7">
+      <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">TAG</label>
+    </div>
+    <div class="gf-form width-20">
+      <select class="gf-form-input gf-size-auto width-18" ng-model="ctrl.target.target.column" ng-if="ctrl.target.target.colinput === 'select'" bs-tooltip="ctrl.target.target.column.length > 40 ? ctrl.target.target.column : ''" ng-options="c for c in ctrl.target.tag_list" ng-change="ctrl.targetBlur()"></select>
+      <input type="text" class="gf-form-input width-18" ng-model="ctrl.target.target.column" ng-if="ctrl.target.target.colinput !== 'select'" spellcheck="false" bs-tooltip="ctrl.target.target.column.length > 40 ? ctrl.target.target.column : ''" ng-blur="ctrl.targetBlur()"></input>
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle TAG input mode'" ng-click="ctrl.toggleColumnInputMode()"><i class="fa fa-exchange"></i></a>
+      </label>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label query-keyword width-6">Aggregator</label>
+    </div>
+    <div class="gf-form">
+      <select class="gf-form-input gf-size-auto width-10" ng-model="ctrl.target.target.downsampling" ng-options="c for c in ['COUNT', 'AVG', 'SUM', 'MIN', 'MAX', '(NONE)']"></select>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label query-keyword width-6">Limit</label>
+    </div>
+    <div class="gf-form">
+      <input type="text" class="gf-form-input width-10" ng-model="ctrl.target.target.limit" spellcheck="false"></input>
+    </div>
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.target.target.tag_mode !== 'Y' && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '') && !ctrl.target.target.rawQuery">
+    <div class="gf-form width-7" ng-if="ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph'">
+      <label class="gf-form-label query-keyword width-5" ng-if="ctrl.target.target.xinput === 'time'">Time</label>
+      <label class="gf-form-label query-keyword width-5" ng-if="ctrl.target.target.xinput !== 'time'">Group</label>
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle X-Axis column(Time/Group)'" ng-click="ctrl.toggleXAxisInputMode()"><i class="fa fa-exchange"></i></a>
+      </label>
+    </div>
+    <div class="gf-form width-7" ng-if="ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph'">
+      <label class="gf-form-label query-keyword" ng-if="ctrl.target.target.xinput === 'time'" style="width:-webkit-fill-available;">TimeField</label>
+    </div>
+    <div class="gf-form width-20" ng-if="ctrl.target.target.xinput === 'time'">
+      <select class="gf-form-input gf-size-auto" ng-model="ctrl.target.target.timefield" bs-tooltip="ctrl.target.target.timefield > 40 ? ctrl.target.target.timefield : ''" ng-options="f for f in ctrl.target.target.dcolumns" style="width:-webkit-fill-available;"></select>
+    </div>
+    <div class="gf-form width-20" ng-if="ctrl.target.target.xinput !== 'time'">
+      <select class="gf-form-input gf-size-auto" ng-model="ctrl.target.target.groupfield" bs-tooltip="ctrl.target.target.groupfield > 40 ? ctrl.target.target.groupfield : ''" ng-options="f for f in ctrl.target.target.gcolumns" ng-change="ctrl.groupChange()" style="width:-webkit-fill-available;"></select>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label query-keyword width-6" ng-if="ctrl.target.target.downsampling !== '(NONE)' && ctrl.target.target.xinput === 'time'">every</label>
+      <label class="gf-form-label query-keyword width-6" ng-if="ctrl.target.target.xinput !== 'time'">Order</label>
+    </div>
+    <div class="gf-form" ng-if="ctrl.target.target.downsampling !== '(NONE)' && ctrl.target.target.xinput === 'time'">
+      <input type="text" class="gf-form-input width-14" ng-model="ctrl.target.target.sampling" placeholder="{{ctrl.panelCtrl.interval}}" spellcheck="false" bs-tooltip="'Leave blank for auto handling based on time range and panel width'" ng-blur="ctrl.targetBlur()"></input>
+    </div>
+    <div class="gf-form" ng-if="ctrl.target.target.xinput !== 'time'">
+      <input type="text" class="gf-form-input width-14" ng-model="ctrl.target.target.orderby" spellcheck="false" bs-tooltip="'enter ORDER BY clause.(ex:1 DESC)'"></input>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label query-keyword width-6">Limit</label>
+    </div>
+    <div class="gf-form">
+      <input type="text" class="gf-form-input width-10" ng-model="ctrl.target.target.limit" spellcheck="false" bs-tooltip="'Leave blank for auto handling based on panel width'" ng-blur="ctrl.targetBlur()"></input>
+    </div>
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.target.target.tag_mode !== 'Y' && !ctrl.target.target.rawQuery && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')" ng-repeat="filter in ctrl.target.target.filters">
+    <div class="gf-form width-7">
+      <label class="gf-form-label query-keyword width-5" ng-if="$index === 0">Filter</label>
+      <label class="gf-form-label gf-form-label--grow width-2" ng-if="$index === 0" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'add filter'" ng-click="ctrl.addFilter()"><i class="fa fa-plus"></i></a></label>
+      </label>
+      <label class="gf-form-label query-keyword" ng-if="$index>0" style="width:-webkit-fill-available;text-align:center;">and</label>
+    </div>
+    <div class="gf-form width-20">
+      <select class="gf-form-input gf-size-auto" ng-model="filter.key" bs-tooltip="filter.key.length > 40 ? filter.key : ''" ng-options="c for c in ctrl.target.target.columns" ng-change="ctrl.getKeyValues(filter.key, $index)" style="width:-webkit-fill-available;"><option value="">--select column--</option></select>
+    </div>
+    <div class="gf-form">
+      <select class="gf-form-input gf-size-auto width-6" ng-model="filter.op" ng-options="p for p in ['=', '<>', '>=', '>', '<=', '<']"></select>
+    </div>
+    <div class="gf-form width-30">
+      <select class="gf-form-input gf-size-auto width-28" ng-model="filter.value" ng-if="filter.input === 'select'" ng-options="v for v in filter.list" ng-change="ctrl.targetBlur()"></select>
+      <input type="text" class="gf-form-input width-28" ng-model="filter.value" ng-if="filter.input !== 'select'" ng-blur="ctrl.targetBlur()" spellcheck="false"></input>
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle input mode'" ng-click="ctrl.toggleInputMode($index)"><i class="fa fa-exchange"></i></a>
+      </label>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'remove filter'" ng-click="ctrl.removefilter($index)"><i class="fa fa-times"></i></a>
+      </label>
+    </div>
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.target.target.rawQuery && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')">
+    <div class="gf-form width-7">
+      <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;height:110px;">Query</label>
+    </div>
+    <div class="gf-form" ng-if="ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph'">
+      <textarea rows="5" class="gf-form-input" ng-model="ctrl.target.target.query" style="width:770px;height:110px;" spellcheck="false" placeholder="Machbase Query(The first column must be in datetime format in nanosecond timestamp units.)
+e.g. SELECT TO_TIMESTAMP(DATE_TRUNC('$__interval_unit', _arrival_time, $__interval_value)) AS TM, COUNT(*) FROM TEST_TABLE GROUP BY TM ORDER BY 1 ASC DURATION FROM $__from_nano TO $__to_nano" ng-model-onblur ng-change="ctrl.CheckQuerySchema()"></textarea>
+    </div>
+    <div class="gf-form" ng-if="ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph'">
+      <textarea rows="5" class="gf-form-input" ng-model="ctrl.target.target.query" style="width:770px;height:110px;" spellcheck="false" placeholder="Machbase Query
+e.g. SELECT * FROM TEST_TABLE DURATION FROM $__from_nano TO $__to_nano" ng-model-onblur ng-change="ctrl.refresh()"></textarea>
+    </div>
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph'">
+    <div class="gf-form width-7" ng-if="ctrl.panel.type !== 'table'">
+      <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">Title</label>
+    </div>
+    <div class="gf-form width-20" ng-if="ctrl.panel.type !== 'table'">
+      <input type="text" class="gf-form-input" ng-model="ctrl.target.target.targetname" spellcheck="false" style="width:-webkit-fill-available;"></input>
+    </div>
+    <div class="gf-form width-6" ng-if="ctrl.target.target.metric_type === '0' && !ctrl.target.target.rawQuery">
+      <label class="gf-form-label query-keyword width-4" bs-tooltip="'DURATION'">Dura...</label>
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle [USE DURATION] option to off'" ng-if="ctrl.target.target.useduration === 'Y'" ng-click="ctrl.toggleUseDuration()"><i class="fa fa-toggle-on"></i></a>
+        <a class="tight-form-item" bs-tooltip="'Toggle [USE DURATION] option to on'" ng-if="ctrl.target.target.useduration !== 'Y'" ng-click="ctrl.toggleUseDuration()"><i class="fa fa-toggle-off"></i></a>
+      </label>
+    </div>
+    <div class="gf-form width-14" ng-if="ctrl.target.target.metric_type === '0' && !ctrl.target.target.rawQuery">
+      <input type="text" class="gf-form-input width-14" bs-tooltip="ctrl.target.target.useduration === 'Y' ? 'Leave blank to use grafana time range as DURATION' : 'DURATION is not used'" ng-disabled="ctrl.target.target.useduration !== 'Y'" ng-model="ctrl.target.target.duration" spellcheck="false"></input>
+    </div>
+  </div>
+
+  <div class="gf-form-inline" ng-if="ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph'">
+    <div class="gf-form width-7">
+      <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">Title</label>
+    </div>
+    <div class="gf-form width-20">
+      <input type="text" class="gf-form-input width-18" ng-model="ctrl.target.target.targetname" spellcheck="false"></input>
+      <div class="gf-form width-2" ng-if="!ctrl.target.target.rawQuery">
+        <label class="gf-form-label gf-form-label--grow width-2" ng-if="ctrl.target.target.useAlert !== 'Y' && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')" style="padding-left:5px;">
+          <a class="tight-form-item" bs-tooltip="'Use alert'" ng-click="ctrl.toggleUseAlert()"><i class="fa fa-exclamation-triangle"></i></a>
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="gf-form-inline" ng-if="(ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph') && ctrl.target.target.useAlert === 'Y'" ng-repeat="alert in ctrl.target.target.alerts">
+    <div class="gf-form width-7">
+      <label class="gf-form-label query-keyword width-5" ng-if="$index === 0">Alert</label>
+      <label class="gf-form-label gf-form-label--grow width-2" ng-if="$index === 0" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'add alert condition'" ng-click="ctrl.addAlert()"><i class="fa fa-plus"></i></a></label>
+      </label>
+      <label class="gf-form-label query-keyword width-5" ng-if="$index>0&&alert.operator === 'and'" style="text-align:center;">and</label>
+      <label class="gf-form-label query-keyword width-5" ng-if="$index>0&&alert.operator === 'or'" style="text-align:center;">or</label>
+      <label class="gf-form-label gf-form-label--grow width-2" ng-if="$index>0" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Toggle between [and] and [or]'" ng-click="ctrl.toggleOperator($index)"><i class="fa fa-exchange"></i></a>
+      </label>
+    </div>
+    <div class="gf-form width-20">
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:4px;padding-right:4px;text-align:center;">
+        <a class="tight-form-item" bs-tooltip="'The checked conditions must be satisfied together'" ng-if="alert.type === 'each'" ng-click="ctrl.toggleType($index)"><i class="fa fa-square-o"></i></a>
+        <a class="tight-form-item" bs-tooltip="'The checked conditions must be satisfied together'" ng-if="alert.type !== 'each'" ng-click="ctrl.toggleType($index)"><i class="fa fa-check-square-o"></i></a>
+      </label>
+      <select class="gf-form-input width-10" ng-model="alert.reducer" ng-options="f for f in ['avg', 'min', 'max', 'sum', 'count', 'last', 'diff', 'diff_minmax', 'cnt_null', 'cnt_not_null', 'percent_diff']"></select>
+      <div class="gf-form width-8" ng-if="alert.range === 'all'">
+        <label class="gf-form-label query-keyword width-6" style="text-align:center;">of all datas</label>
+        <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+          <a class="tight-form-item" bs-tooltip="'Toggle effective range to [all] and [Input]'" ng-click="ctrl.toggleEffectivRange($index)"><i class="fa fa-exchange"></i></a>
+        </label>
+      </div>
+      <div class="gf-form width-8" ng-if="alert.range !== 'all'">
+        <label class="gf-form-label query-keyword width-6" style="text-align:center;">of datas in</label>
+        <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+          <a class="tight-form-item" bs-tooltip="'Toggle effective range to [all] and [Input]'" ng-click="ctrl.toggleEffectivRange($index)"><i class="fa fa-exchange"></i></a>
+        </label>
+      </div>
+    </div>
+    <div class="gf-form width-6" ng-if="alert.range !== 'all'">
+      <input type="text" class="gf-form-input width-4" ng-model="alert.range" spellcheck="false" ng-change="ctrl.checkAlertRange($index)" style="margin-right:0px;"></input>
+      <select class="gf-form-input width-2" ng-model="alert.range" ng-options="f for f in ['1s', '10s', '1m', '5m', '10m', '15m', '30m', '1h', '12h', '24h']" ng-change="ctrl.checkAlertRange($index)"></select>
+    </div>
+    <div class="gf-form">
+      <select class="gf-form-input width-14" ng-model="alert.evaluator.type" ng-options="f.type as f.name for f in [{'type':'gt', 'name':'is above'}, {'type':'lt', 'name':'is below'}, {'type':'out', 'name':'is outside range'}, {'type':'in', 'name':'is within range'}, {'type':'no', 'name':'has no value'}]"></select>
+    </div>
+    <div class="gf-form" ng-if="alert.evaluator.type !== 'no'">
+      <input type="number" class="gf-form-input width-6" bs-tooltip="alert.evaluator.value1|number" ng-model="alert.evaluator.value1"></input>
+    </div>
+    <div class="gf-form width-8" ng-if="alert.evaluator.type === 'out' || alert.evaluator.type === 'in'">
+      <label class="gf-form-label query-keyword width-2" style="padding-left:4px;padding-right:4px;text-align:center;">to</label>
+      <input type="number" class="gf-form-input width-6" bs-tooltip="alert.evaluator.value2|number" ng-model="alert.evaluator.value2"></input>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label gf-form-label--grow width-2" style="padding-left:5px;">
+        <a class="tight-form-item" bs-tooltip="'Remove this alert'" ng-click="ctrl.removeAlert($index)"><i class="fa fa-times"></i></a>
+      </label>
+    </div>
+  </div>
+</query-editor-row>

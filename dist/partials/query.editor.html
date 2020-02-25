@@ -1,4 +1,8 @@
 <query-editor-row query-ctrl="ctrl" class="generic-datasource-query-row" has-text-edit-mode="true">
+  <div class="gf-form" ng-if="ctrl.target.target.errors.hasOwnProperty('last_error') && ctrl.target.target.errors.last_error !== ''">
+    <pre class="gf-form-pre alert alert-error">{{ctrl.target.target.errors.last_error}}</pre>
+  </div>
+
   <div class="gf-form-inline" ng-if="!ctrl.target.target.rawQuery">
     <div class="gf-form width-7" ng-if="(ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph') || ctrl.checkAvailableSameas()">
       <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">FROM</label>
@@ -40,6 +44,7 @@
       </label>
     </div>
   </div>
+
   <div class="gf-form-inline" ng-if="ctrl.target.target.tag_mode === 'Y' && !ctrl.target.target.rawQuery">
     <div class="gf-form width-7">
       <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">TAG</label>
@@ -64,6 +69,7 @@
       <input type="text" class="gf-form-input width-10" ng-model="ctrl.target.target.limit" spellcheck="false"></input>
     </div>
   </div>
+
   <div class="gf-form-inline" ng-if="ctrl.target.target.tag_mode !== 'Y' && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '') && !ctrl.target.target.rawQuery">
     <div class="gf-form width-7" ng-if="ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph'">
       <label class="gf-form-label query-keyword width-5" ng-if="ctrl.target.target.xinput === 'time'">Time</label>
@@ -98,6 +104,7 @@
       <input type="text" class="gf-form-input width-10" ng-model="ctrl.target.target.limit" spellcheck="false" bs-tooltip="'Leave blank for auto handling based on panel width'" ng-blur="ctrl.targetBlur()"></input>
     </div>
   </div>
+
   <div class="gf-form-inline" ng-if="ctrl.target.target.tag_mode !== 'Y' && !ctrl.target.target.rawQuery && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')" ng-repeat="filter in ctrl.target.target.filters">
     <div class="gf-form width-7">
       <label class="gf-form-label query-keyword width-5" ng-if="$index === 0">Filter</label>
@@ -125,6 +132,7 @@
       </label>
     </div>
   </div>
+
   <div class="gf-form-inline" ng-if="ctrl.target.target.rawQuery && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')">
     <div class="gf-form width-7">
       <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;height:110px;">Query</label>
@@ -138,6 +146,7 @@ e.g. SELECT TO_TIMESTAMP(DATE_TRUNC('$__interval_unit', _arrival_time, $__interv
 e.g. SELECT * FROM TEST_TABLE DURATION FROM $__from_nano TO $__to_nano" ng-model-onblur ng-change="ctrl.refresh()"></textarea>
     </div>
   </div>
+
   <div class="gf-form-inline" ng-if="ctrl.panel.type !== 'machgraph' && ctrl.panel.type !== 'graph'">
     <div class="gf-form width-7" ng-if="ctrl.panel.type !== 'table'">
       <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">Title</label>
@@ -156,19 +165,21 @@ e.g. SELECT * FROM TEST_TABLE DURATION FROM $__from_nano TO $__to_nano" ng-model
       <input type="text" class="gf-form-input width-14" bs-tooltip="ctrl.target.target.useduration === 'Y' ? 'Leave blank to use grafana time range as DURATION' : 'DURATION is not used'" ng-disabled="ctrl.target.target.useduration !== 'Y'" ng-model="ctrl.target.target.duration" spellcheck="false"></input>
     </div>
   </div>
+
   <div class="gf-form-inline" ng-if="ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph'">
     <div class="gf-form width-7">
       <label class="gf-form-label query-keyword" style="width:-webkit-fill-available;">Title</label>
     </div>
     <div class="gf-form width-20">
-      <input type="text" class="gf-form-input width-20" ng-model="ctrl.target.target.targetname" spellcheck="false"></input>
-    </div>
-    <div class="gf-form width-2" ng-if="!ctrl.target.target.rawQuery">
-      <label class="gf-form-label gf-form-label--grow width-2" ng-if="ctrl.target.target.useAlert !== 'Y' && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')" style="padding-left:5px;">
-        <a class="tight-form-item" bs-tooltip="'Use alert'" ng-click="ctrl.toggleUseAlert()"><i class="fa fa-exclamation-triangle"></i></a>
-      </label>
+      <input type="text" class="gf-form-input width-18" ng-model="ctrl.target.target.targetname" spellcheck="false"></input>
+      <div class="gf-form width-2" ng-if="!ctrl.target.target.rawQuery">
+        <label class="gf-form-label gf-form-label--grow width-2" ng-if="ctrl.target.target.useAlert !== 'Y' && (ctrl.checkAvailableSameas() || ctrl.target.target.sameAs === '')" style="padding-left:5px;">
+          <a class="tight-form-item" bs-tooltip="'Use alert'" ng-click="ctrl.toggleUseAlert()"><i class="fa fa-exclamation-triangle"></i></a>
+        </label>
+      </div>
     </div>
   </div>
+  
   <div class="gf-form-inline" ng-if="(ctrl.panel.type === 'machgraph' || ctrl.panel.type === 'graph') && ctrl.target.target.useAlert === 'Y'" ng-repeat="alert in ctrl.target.target.alerts">
     <div class="gf-form width-7">
       <label class="gf-form-label query-keyword width-5" ng-if="$index === 0">Alert</label>
@@ -219,9 +230,5 @@ e.g. SELECT * FROM TEST_TABLE DURATION FROM $__from_nano TO $__to_nano" ng-model
         <a class="tight-form-item" bs-tooltip="'Remove this alert'" ng-click="ctrl.removeAlert($index)"><i class="fa fa-times"></i></a>
       </label>
     </div>
-  </div>
-
-  <div class="gf-form" ng-if="ctrl.target.target.errors.hasOwnProperty('last_error') && ctrl.target.target.errors.last_error !== ''">
-    <pre class="gf-form-pre alert alert-error">{{ctrl.target.target.errors.last_error}}</pre>
   </div>
 </query-editor-row>

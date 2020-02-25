@@ -247,9 +247,15 @@ function () {
       });
     }
   }, {
+    key: "annotationQuery",
+    value: function annotationQuery(options) {
+      console.log('annotation query');
+      console.log(options);
+    }
+  }, {
     key: "metricFindQuery",
-    value: function metricFindQuery(aQuery) {
-      var sQuery = aQuery;
+    value: function metricFindQuery(options) {
+      var sQuery = options;
       var sRegs = [];
       var sVals = [];
       var sVariables = this.templateSrv.variables.filter(function (v) {
