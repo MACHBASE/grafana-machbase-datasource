@@ -5,7 +5,8 @@ This plugin allows you to visualize all data from [`Machbase`](https://www.machb
 ![screenshot](https://user-images.githubusercontent.com/30223383/75232656-f27de980-57fa-11ea-82fb-f9eba5827b5c.png)
 
 
-## Installation
+## Features
+
 Before using this plugin, MWA(Machbase Web Admin) has to be run.
 
 To use the plugin, download on your Grafana server.
