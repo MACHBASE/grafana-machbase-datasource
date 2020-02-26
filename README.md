@@ -10,9 +10,4 @@ Before using this plugin, MWA(Machbase Web Admin) has to be run.
 
 To use the plugin, download on your Grafana server.
 
-```
-grafana-cli plugins install machbase-datasource
-```
-
-
 Machbase Quick Start : <https://doc.machbase.com/quick-start.html>
